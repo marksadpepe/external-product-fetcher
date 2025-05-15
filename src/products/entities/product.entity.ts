@@ -6,7 +6,6 @@ import {
   ProductDimensionsItem,
   ProductMetaItem,
   ProductReviewItem,
-  ProductTag,
 } from 'src/products/interfaces/products';
 
 @Entity()
@@ -23,20 +22,20 @@ export class ProductEntity {
   @Column({ type: 'enum', enum: ProductCategory })
   category: ProductCategory;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   discountPercentage: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   rating: number;
 
   @Column()
   stock: number;
 
-  @Column({ type: 'enum', enum: ProductTag, array: true, default: [] })
-  tags: ProductTag[];
+  @Column({ type: 'varchar', length: 64, array: true })
+  tags: string[];
 
   @Column()
   brand: string;
@@ -59,7 +58,7 @@ export class ProductEntity {
   @Column({ type: 'enum', enum: ProductAvailabilityStatus })
   availabilityStatus: ProductAvailabilityStatus;
 
-  @Column({ type: 'json', array: true })
+  @Column({ type: 'jsonb' })
   reviews: ProductReviewItem[];
 
   @Column()
