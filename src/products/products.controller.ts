@@ -11,6 +11,8 @@ import { ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
 
 import { ImportProductsDataDto } from 'src/products/dto/requests/import-products-request.dto';
 import { ImportProductsResultDto } from 'src/products/dto/responses/import-products-response.dto';
+import { GetProductsQueryParamsDto } from 'src/products/dto/requests/get-products-request.dto';
+import { ProductsDataResponseDto } from 'src/products/dto/responses/get-products-response.dto';
 import { ProductsService } from 'src/products/products.service';
 
 @ApiTags('Products')
@@ -34,5 +36,16 @@ export class ProductsController {
     this.logger.log('Import products');
 
     return await this.productsService.importProducts(data);
+  }
+
+  @ApiResponse({
+    status: 200,
+    type: ProductsDataResponseDto,
+  })
+  @Get()
+  async getProducts(@Query() query: GetProductsQueryParamsDto): Promise<any> {
+    this.logger.log('GET products request');
+
+    return await this.productsService.getProducts(query);
   }
 }

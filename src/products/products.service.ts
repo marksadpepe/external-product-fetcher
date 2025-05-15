@@ -12,7 +12,11 @@ import {
   ProductAvailabilityStatus,
   ProductRawItem,
   GetCalculatedProducts,
+  GetProductsQueryParams,
+  ProductsDataResponse,
 } from 'src/products/interfaces/products';
+
+import { ProductDataMapper } from 'src/products/product.data-mapper';
 
 import { InjectQueue } from '@nestjs/bull';
 import { QueueNames, ProcessorNames } from 'src/common/queue';
@@ -50,6 +54,7 @@ export class ProductsService {
     @InjectQueue(QueueNames.Products) private readonly productsQueue: Queue,
     @InjectRepository(ProductEntity)
     private readonly productsRepository: Repository<ProductEntity>,
+    private readonly productDataMapper: ProductDataMapper,
   ) {}
 
   async importProducts(
@@ -72,6 +77,44 @@ export class ProductsService {
 
       throw new InternalServerErrorException();
     }
+  }
+
+  async getProducts(
+    queryParams: GetProductsQueryParams,
+  ): Promise<ProductsDataResponse> {
+    const { limit = 10, page = 1, searchTitle } = queryParams;
+    const actualPage = page ? Number(page) : 1;
+    const actualLimit = limit ? Number(limit) : 10;
+
+    const skip = (actualPage - 1) * actualLimit;
+
+    const query = this.productsRepository.createQueryBuilder('product');
+
+    if (searchTitle) {
+      query.where('product.title ILIKE :searchTitle', {
+        searchTitle: `%${searchTitle}%`,
+      });
+    }
+
+    query.orderBy('product.id', 'ASC').skip(skip).limit(actualLimit);
+
+    const [data, total] = await query.getManyAndCount();
+
+    const totalPages = Math.ceil(total / actualLimit);
+
+    return {
+      products: data.map((product) =>
+        this.productDataMapper.toProductItem(product),
+      ),
+      meta: {
+        total,
+        page: actualPage,
+        limit: actualLimit,
+        totalPages,
+        hasNextPage: totalPages > actualPage,
+        hasPreviousPage: actualPage > 1,
+      },
+    };
   }
 
   async saveProductsToDb(data: ProductRawItem[]): Promise<void> {

@@ -10,6 +10,8 @@ import { ExternalApiModule } from 'src/external-api/external-api.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductEntity } from 'src/products/entities/product.entity';
 
+import { ProductDataMapper } from 'src/products/product.data-mapper';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductEntity]),
@@ -19,6 +21,6 @@ import { ProductEntity } from 'src/products/entities/product.entity';
     ExternalApiModule,
   ],
   controllers: [ProductsController],
-  providers: [ProductsService, ProductsProcessor],
+  providers: [ProductsService, ProductsProcessor, ProductDataMapper],
 })
 export class ProductsModule {}
