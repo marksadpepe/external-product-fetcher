@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  postgres14:
+    image: postgresql14
+    build:
+      context: './build/postgres14'
+    restart: always
+    container_name: postgres14.utd
+    ports:
+      - 5432:5432
+    volumes:
+      - utd-postgres14:/bitnami/postgresql:delegated
+    environment:
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_SHARED_PRELOAD_LIBRARIES=uuid-ossp
+
+  redis:
+    restart: always
+    image: "bitnami/redis:6.0.9"
+    container_name: redis.utd
+    volumes:
+      - redis:/bitnami/redis/data:delegated
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  utd-backend-app:
+    image: utd-backend-app
+    build:
+      context: "./build/utd-backend-app"
+    container_name: backend-app.utd
+    env_file: "./.env"
+    volumes:
+      - "./:/app:delegated"
+
+volumes:
+  utd-postgres14:
+    name: utd-postgres14
+    driver: local
+  redis:
+    name: utd-redis
+    driver: local
+
+networks:
+  default:
+    name: utd
