@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgres14:
     image: postgresql14
@@ -14,6 +12,12 @@ services:
     environment:
       - POSTGRESQL_PASSWORD=postgres
       - POSTGRESQL_SHARED_PRELOAD_LIBRARIES=uuid-ossp
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=postgres pg_isready -U postgres -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   redis:
     restart: always
@@ -23,6 +27,12 @@ services:
       - redis:/bitnami/redis/data:delegated
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $ALLOW_EMPTY_PASSWORD ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   utd-backend-app:
     image: utd-backend-app
@@ -32,6 +42,11 @@ services:
     env_file: "./.env"
     volumes:
       - "./:/app:delegated"
+    depends_on:
+      postgres14:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   utd-postgres14:
