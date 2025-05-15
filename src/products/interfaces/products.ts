@@ -5,34 +5,6 @@ export enum ProductCategory {
   Groceries = 'groceries',
 }
 
-export enum ProductTag {
-  Beauty = 'beauty',
-  Mascara = 'mascara',
-  Eyeshadow = 'eyeshadow',
-  FacePowder = 'face powder',
-  Lipstick = 'lipstick',
-  NailPolish = 'nail polish',
-  Fragrances = 'fragrances',
-  Perfumes = 'perfumes',
-  Furniture = 'furniture',
-  Beds = 'beds',
-  Sofas = 'sofas',
-  BedsideTables = 'bedside tables',
-  OfficeChairs = 'office chairs',
-  Bathroom = 'bathroom',
-  Fruits = 'fruits',
-  Meat = 'meat',
-  PetSupplies = 'pet supplies',
-  CatFood = 'cat food',
-  DogFood = 'dog food',
-  CookingEssentials = 'cooking essentials',
-  Vegetables = 'vegetables',
-  Dairy = 'dairy',
-  Seafood = 'seafood',
-  Condiments = 'condiments',
-  Desserts = 'desserts',
-}
-
 export enum ProductAvailabilityStatus {
   InStock = 'In Stock',
   LowStock = 'Low Stock',
@@ -59,32 +31,49 @@ export interface ProductMetaItem {
   qrCode: string;
 }
 
-export interface ProductItem {
+export interface BasicProductItem {
   id: number;
   title: string;
   description: string;
-  category: ProductCategory;
   price: number;
   discountPercentage: number;
   rating: number;
   stock: number;
-  tags: ProductTag[];
+  tags: string[];
   brand: string;
   sku: string;
   weight: number;
   dimensions: ProductDimensionsItem;
   warrantyInformation: string;
   shippingInformation: string;
-  availabilityStatus: ProductAvailabilityStatus;
   reviews: ProductReviewItem[];
   returnPolicy: string;
   minimumOrderQuantity: number;
   meta: ProductMetaItem;
-  images: string[];
   thumbnail: string;
+  images: string[];
+}
+
+export interface ProductItem extends BasicProductItem {
+  category: ProductCategory;
+  availabilityStatus: ProductAvailabilityStatus;
+}
+
+export interface ImportProductsData {
+  limit?: number;
+  skip?: number;
 }
 
 export interface ImportProductsResult {
   message: string;
   success: boolean;
+}
+
+export interface ProductRawItem extends BasicProductItem {
+  category: string;
+  availabilityStatus: string;
+}
+
+export interface ProductRawDataResponse {
+  products: ProductRawItem[];
 }
