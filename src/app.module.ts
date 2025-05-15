@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbNameStrategy } from 'src/db/db-name.strategy';
 import { config } from 'src/config/config';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { config } from 'src/config/config';
       entities: [`${__dirname}/**/*.entity{.js,.ts}`],
       migrations: [`${__dirname}/**/migrations/*{.js,.ts}`],
     }),
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
