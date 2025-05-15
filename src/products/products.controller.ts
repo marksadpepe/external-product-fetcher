@@ -1,18 +1,38 @@
-import { Controller, Get, Post, Query, Param } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Logger,
+  Get,
+  Post,
+  Query,
+  Param,
+  Body,
+} from '@nestjs/common';
+import { ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
 
-import { ImportProductsResultDto } from 'src/products/dto/response/import-products-response.dto';
+import { ImportProductsDataDto } from 'src/products/dto/requests/import-products-request.dto';
+import { ImportProductsResultDto } from 'src/products/dto/responses/import-products-response.dto';
 import { ProductsService } from 'src/products/products.service';
 
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
+  protected readonly logger = new Logger(ProductsController.name);
+
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiBody({
+    type: ImportProductsDataDto,
+  })
+  @ApiResponse({
+    status: 201,
+    type: ImportProductsResultDto,
+  })
   @Post('import')
-  async importProducts(): Promise<ImportProductsResultDto> {
-    // log
+  async importProducts(
+    @Body() data: ImportProductsDataDto,
+  ): Promise<ImportProductsResultDto> {
+    this.logger.log('Import products');
 
-    return await this.productsService.importProducts();
+    return await this.productsService.importProducts(data);
   }
 }

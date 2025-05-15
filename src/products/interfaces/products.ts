@@ -1,3 +1,5 @@
+import { ProductEntity } from 'src/products/entities/product.entity';
+
 export enum ProductCategory {
   Beauty = 'beauty',
   Fragrances = 'fragrances',
@@ -76,4 +78,9 @@ export interface ProductRawItem extends BasicProductItem {
 
 export interface ProductRawDataResponse {
   products: ProductRawItem[];
+}
+
+export interface GetCalculatedProducts {
+  productsToCreate: ProductRawItem[];
+  productsToDelete: ProductEntity[];
 }
