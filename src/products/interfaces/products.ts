@@ -83,3 +83,8 @@ export interface ProductItem {
   images: string[];
   thumbnail: string;
 }
+
+export interface ImportProductsResult {
+  message: string;
+  success: boolean;
+}

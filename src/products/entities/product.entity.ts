@@ -7,7 +7,7 @@ import {
   ProductMetaItem,
   ProductReviewItem,
   ProductTag,
-} from 'src/types/product';
+} from 'src/products/interfaces/products';
 
 @Entity()
 export class ProductEntity {
