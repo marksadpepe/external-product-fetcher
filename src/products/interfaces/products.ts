@@ -84,3 +84,23 @@ export interface GetCalculatedProducts {
   productsToCreate: ProductRawItem[];
   productsToDelete: ProductEntity[];
 }
+
+export interface GetProductsQueryParams {
+  page?: number;
+  limit?: number;
+  searchTitle?: string;
+}
+
+export class ProductMetaResponse {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export class ProductsDataResponse {
+  products: ProductItem[];
+  meta: ProductMetaResponse;
+}
