@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbNameStrategy } from 'src/db/db-name.strategy';
@@ -22,7 +20,7 @@ import { ProductsModule } from './products/products.module';
     }),
     ProductsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
