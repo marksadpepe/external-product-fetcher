@@ -13,6 +13,7 @@ import { ImportProductsDataDto } from 'src/products/dto/requests/import-products
 import { ImportProductsResultDto } from 'src/products/dto/responses/import-products-response.dto';
 import { GetProductsQueryParamsDto } from 'src/products/dto/requests/get-products-request.dto';
 import { ProductsDataResponseDto } from 'src/products/dto/responses/get-products-response.dto';
+import { ProductItemDto } from 'src/products/dto/generic/product-item-response.dto';
 import { ProductsService } from 'src/products/products.service';
 
 @ApiTags('Products')
@@ -43,9 +44,22 @@ export class ProductsController {
     type: ProductsDataResponseDto,
   })
   @Get()
-  async getProducts(@Query() query: GetProductsQueryParamsDto): Promise<any> {
+  async getProducts(
+    @Query() query: GetProductsQueryParamsDto,
+  ): Promise<ProductsDataResponseDto> {
     this.logger.log('GET products request');
 
     return await this.productsService.getProducts(query);
+  }
+
+  @ApiResponse({
+    status: 200,
+    type: ProductItemDto,
+  })
+  @Get(':id')
+  async getProduct(@Param('id') id: string): Promise<ProductItemDto> {
+    this.logger.log('GET product by ID request');
+
+    return await this.productsService.getProduct(id);
   }
 }

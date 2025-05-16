@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 
 import {
@@ -115,6 +116,18 @@ export class ProductsService {
         hasPreviousPage: actualPage > 1,
       },
     };
+  }
+
+  async getProduct(id: string): Promise<ProductItem> {
+    const product = await this.productsRepository.findOne({
+      where: { externalId: Number(id) },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product ${id} not found`);
+    }
+
+    return this.productDataMapper.toProductItem(product);
   }
 
   async saveProductsToDb(data: ProductRawItem[]): Promise<void> {
