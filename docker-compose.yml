@@ -12,6 +12,7 @@ services:
     environment:
       - POSTGRESQL_PASSWORD=postgres
       - POSTGRESQL_SHARED_PRELOAD_LIBRARIES=uuid-ossp
+      - POSTGRESQL_DATABASE=products
     healthcheck:
       test: ["CMD-SHELL", "PGPASSWORD=postgres pg_isready -U postgres -h localhost"]
       interval: 10s
