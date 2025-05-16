@@ -1,0 +1,61 @@
+services:
+  postgres14:
+    image: postgresql14
+    build:
+      context: './build/postgres14-utd'
+    restart: always
+    container_name: postgres14-utd
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres14-utd:/bitnami/postgresql:delegated
+    environment:
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_SHARED_PRELOAD_LIBRARIES=uuid-ossp
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=postgres pg_isready -U postgres -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  redis:
+    restart: always
+    image: "bitnami/redis:6.0.9"
+    container_name: redis-utd
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-utd:/bitnami/redis/data:delegated
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $ALLOW_EMPTY_PASSWORD ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend-app-utd:
+    image: backend-app-utd
+    build:
+      context: "./build/backend-app-utd"
+    container_name: backend-app-utd
+    env_file: "./.env"
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - "./:/app:delegated"
+    depends_on:
+      postgres14:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres14-utd:
+    name: postgres14-utd
+    driver: local
+  redis-utd:
+    name: redis-utd
+    driver: local
